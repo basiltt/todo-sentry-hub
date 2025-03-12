@@ -31,7 +31,7 @@ export const login = async (email: string, password: string): Promise<User> => {
     }
     
     // Get user profile
-    let userProfile;
+    let userProfile: any = null;
     
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')

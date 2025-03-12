@@ -11,6 +11,26 @@ export interface Todo {
   createdAt: Date;
 }
 
+// Database row shape
+interface TodoRow {
+  id: string;
+  text: string;
+  completed: boolean;
+  userId: string;
+  userName: string;
+  createdAt: string;
+}
+
+// Convert database row to Todo model
+const mapRowToTodo = (row: any): Todo => ({
+  id: row.id,
+  text: row.text,
+  completed: row.completed,
+  userId: row.userId,
+  userName: row.userName,
+  createdAt: new Date(row.createdAt),
+});
+
 // Get todos for a user
 export const getTodos = async (currentUser: User): Promise<Todo[]> => {
   try {
@@ -24,13 +44,10 @@ export const getTodos = async (currentUser: User): Promise<Todo[]> => {
     // Filter todos based on user role
     const userTodos = currentUser.role === 'admin' 
       ? data 
-      : data.filter((todo: Todo) => todo.userId === currentUser.id);
+      : data.filter((todo: any) => todo.userId === currentUser.id);
     
-    // Convert string dates to Date objects
-    return userTodos.map((todo: any) => ({
-      ...todo,
-      createdAt: new Date(todo.createdAt),
-    }));
+    // Convert to Todo objects
+    return userTodos.map(mapRowToTodo);
   } catch (error) {
     console.error("Error fetching todos:", error);
     throw error;
@@ -56,11 +73,8 @@ export const addTodo = async (text: string, currentUser: User): Promise<Todo> =>
       
     if (error) throw error;
     
-    // Return the new todo with the createdAt field as a Date object
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-    };
+    // Return the new todo
+    return mapRowToTodo(data);
   } catch (error) {
     console.error("Error adding todo:", error);
     throw error;
@@ -89,11 +103,8 @@ export const toggleTodoComplete = async (id: string, currentUser: User): Promise
       
     if (error) throw error;
     
-    // Return the updated todo with the createdAt field as a Date object
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-    };
+    // Return the updated todo
+    return mapRowToTodo(data);
   } catch (error) {
     console.error("Error toggling todo:", error);
     throw error;
@@ -113,11 +124,8 @@ export const editTodo = async (id: string, text: string, currentUser: User): Pro
       
     if (error) throw error;
     
-    // Return the updated todo with the createdAt field as a Date object
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-    };
+    // Return the updated todo
+    return mapRowToTodo(data);
   } catch (error) {
     console.error("Error editing todo:", error);
     throw error;
