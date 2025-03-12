@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useAuth } from "@/lib/auth";
 import { ArrowRight, CheckCircle, ShieldCheck, Clock, Search, Calendar, Tag } from "lucide-react";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
@@ -26,7 +27,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-dots-pattern">
+    <div className="min-h-screen flex flex-col bg-dots-pattern dark:bg-background">
       {/* Header */}
       <header className="w-full py-4 bg-white/80 backdrop-blur-md dark:bg-background/80 border-b border-border">
         <div className="container flex items-center justify-between px-4">
@@ -60,6 +61,8 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeSwitcher />
+            
             {isAuthenticated ? (
               <ButtonCustom asChild>
                 <Link to="/dashboard">
@@ -178,7 +181,7 @@ const Index = () => {
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="floating-card p-6"
+                className="floating-card p-6 dark:bg-card dark:border dark:border-border"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   {feature.icon}
@@ -237,8 +240,11 @@ const Index = () => {
               <span className="font-semibold tracking-tight">ChronoTask</span>
             </div>
             
-            <div className="text-sm text-muted-foreground">
-              © 2023 ChronoTask. All rights reserved.
+            <div className="flex items-center gap-4">
+              <ThemeSwitcher className="mr-2" />
+              <div className="text-sm text-muted-foreground">
+                © 2023 ChronoTask. All rights reserved.
+              </div>
             </div>
           </div>
         </div>

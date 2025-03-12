@@ -30,6 +30,11 @@ export function ThemeProvider({
     }
   }, [theme]);
 
+  // Store theme preference in localStorage
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
