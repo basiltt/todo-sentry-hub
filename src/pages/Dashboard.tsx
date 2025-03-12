@@ -7,6 +7,7 @@ import TodoForm from "@/components/todos/TodoForm";
 import { useAuth } from "@/lib/auth";
 import { getTodos, addTodo, toggleTodoComplete, editTodo, deleteTodo, Todo } from "@/lib/todo";
 import { useToast } from "@/components/ui/use-toast";
+import { Calendar, Clock, CheckSquare, Plus } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated, isAdmin } = useAuth();
@@ -127,21 +128,64 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Get counts for analytics
+  const completedTodos = todos.filter(todo => todo.completed).length;
+  const pendingTodos = todos.length - completedTodos;
+  const completionRate = todos.length > 0 ? Math.round((completedTodos / todos.length) * 100) : 0;
+
+  // Quick actions for the dashboard
+  const quickActions = [
+    { icon: <Plus className="h-4 w-4" />, label: "Add task", color: "bg-task-blue text-white" },
+    { icon: <Calendar className="h-4 w-4" />, label: "Schedule", color: "bg-task-purple text-white" },
+    { icon: <Clock className="h-4 w-4" />, label: "Reminders", color: "bg-task-orange text-white" },
+  ];
+
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold">Tasks</h1>
-            <div className="text-sm px-3 py-1 bg-secondary dark:bg-accent rounded-full">
-              {isAdmin ? "Admin view" : "Personal view"}
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Today's date */}
+          <div className="glass-card p-5 col-span-2">
+            <h1 className="text-2xl font-bold mb-2">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h1>
+            <p className="text-muted-foreground">
+              {isAdmin 
+                ? "Admin view: Manage all tasks from all users"
+                : "Organize your tasks and boost productivity"}
+            </p>
+          </div>
+          
+          {/* Quick stats */}
+          <div className="glass-card p-5 flex flex-col justify-between">
+            <div className="text-sm text-muted-foreground mb-2">Task completion</div>
+            <div className="flex justify-between mb-2">
+              <div>
+                <div className="text-3xl font-semibold">{completionRate}%</div>
+                <div className="text-xs text-muted-foreground">{completedTodos} of {todos.length} tasks</div>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <CheckSquare className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-value bg-primary" 
+                style={{ width: `${completionRate}%` }}
+              ></div>
             </div>
           </div>
-          <p className="text-muted-foreground">
-            {isAdmin 
-              ? "As an admin, you can see and manage all tasks from all users."
-              : "Manage your personal tasks and keep track of your progress."}
-          </p>
+        </div>
+        
+        {/* Quick actions */}
+        <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
+          {quickActions.map((action, index) => (
+            <button 
+              key={index}
+              className={`${action.color} rounded-full px-4 py-2 flex items-center gap-2 text-sm font-medium shadow-sm hover:opacity-90 transition-opacity`}
+            >
+              {action.icon}
+              {action.label}
+            </button>
+          ))}
         </div>
 
         <TodoForm onAdd={handleAddTodo} isLoading={isAdding} />

@@ -1,10 +1,25 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { LogOut, Menu, X, Home, User, Settings, Moon, Sun, AlignJustify } from "lucide-react";
+import { 
+  LogOut, 
+  Menu, 
+  X, 
+  Home, 
+  User, 
+  Settings, 
+  Moon, 
+  Sun, 
+  Inbox, 
+  Calendar, 
+  CheckSquare,
+  Clock,
+  Search
+} from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -16,6 +31,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
+  
+  // Check system preference for dark mode
+  useEffect(() => {
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDarkMode(isDark);
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -32,7 +57,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/50 dark:bg-background">
+    <div className="min-h-screen bg-dots-pattern bg-background/90 dark:bg-background/90">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md dark:bg-background/80 border-b border-border">
         <div className="container flex h-16 items-center justify-between px-4">
@@ -67,14 +92,35 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </svg>
                 </div>
               </div>
-              <span className="font-semibold tracking-tight">TodoFlow</span>
+              <span className="font-semibold tracking-tight">ChronoTask</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
+            <div className="relative">
+              <button 
+                onClick={() => setSearchActive(!searchActive)}
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded-full transition-all duration-300",
+                  searchActive ? "bg-secondary/80 w-64" : "bg-secondary/50 w-10 hover:bg-secondary/80"
+                )}
+              >
+                <Search className="h-4 w-4 min-w-4 text-muted-foreground" />
+                {searchActive && (
+                  <input 
+                    className="bg-transparent border-none outline-none text-sm w-full" 
+                    placeholder="Search tasks..."
+                    autoFocus
+                  />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-secondary transition-colors"
+              className="p-2 rounded-full hover:bg-secondary/80 transition-colors"
               aria-label="Toggle theme"
             >
               {isDarkMode ? (
@@ -84,13 +130,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               )}
             </button>
             
-            <div className="flex items-center gap-2">
-              <div className="hidden md:block">
-                <p className="text-sm font-medium">{user?.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {isAdmin ? "Admin" : "User"}
-                </p>
-              </div>
+            <div className="flex items-center gap-3">
               <ButtonCustom
                 variant="ghost"
                 size="icon"
@@ -98,104 +138,180 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 className="rounded-full"
                 aria-label="Logout"
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-4 w-4" />
               </ButtonCustom>
+              
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                  {user?.name?.charAt(0) || 'U'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Sidebar */}
-      <div
-        className={`fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden ${
-          mobileMenuOpen ? "block" : "hidden"
-        }`}
-      >
-        <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-background p-6 shadow-lg animate-slide-right">
-          <div className="flex items-center justify-between mb-8">
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <div className="relative w-8 h-8">
-                <div className="absolute inset-0 bg-primary rounded-lg opacity-10"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 text-primary"
-                  >
-                    <path d="M11 20h4"></path>
-                    <path d="M12 4v16"></path>
-                    <path d="M18 8l-6 6-6-6"></path>
-                  </svg>
-                </div>
-              </div>
-              <span className="font-semibold tracking-tight">TodoFlow</span>
-            </Link>
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-md hover:bg-secondary"
-              aria-label="Close menu"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="space-y-1">
+      {/* Main content with sidebar */}
+      <div className="flex flex-1 min-h-[calc(100vh-4rem)]">
+        {/* Sidebar (hidden on mobile) */}
+        <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border">
+          <nav className="space-y-1 mt-6">
             <Link
               to="/dashboard"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-secondary transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-primary bg-primary/5 font-medium"
             >
-              <Home className="h-5 w-5" />
-              <span>Dashboard</span>
+              <CheckSquare className="h-4 w-4" />
+              <span>Tasks</span>
             </Link>
             <Link
-              to="/profile"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-secondary transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              to="/calendar"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
             >
-              <User className="h-5 w-5" />
+              <Calendar className="h-4 w-4" />
+              <span>Calendar</span>
+            </Link>
+            <Link
+              to="/inbox"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
+            >
+              <Inbox className="h-4 w-4" />
+              <span>Inbox</span>
+            </Link>
+            <Link
+              to="/reminders"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
+            >
+              <Clock className="h-4 w-4" />
+              <span>Reminders</span>
+            </Link>
+          </nav>
+          
+          <div className="mt-auto pt-4 border-t border-border">
+            <Link
+              to="/profile"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
+            >
+              <User className="h-4 w-4" />
               <span>Profile</span>
             </Link>
             {isAdmin && (
               <Link
                 to="/settings"
-                className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-secondary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
               >
-                <Settings className="h-5 w-5" />
+                <Settings className="h-4 w-4" />
                 <span>Settings</span>
               </Link>
             )}
           </div>
+        </aside>
 
-          <div className="absolute bottom-6 left-6 right-6">
-            <div className="bg-secondary/50 rounded-lg p-4 mb-4">
-              <div className="font-medium mb-1">{user?.name}</div>
-              <div className="text-sm text-muted-foreground">
-                {isAdmin ? "Admin Access" : "User Access"}
-              </div>
+        {/* Mobile Sidebar */}
+        <div
+          className={`fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden ${
+            mobileMenuOpen ? "block" : "hidden"
+          }`}
+        >
+          <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-background p-6 shadow-lg animate-slide-right">
+            <div className="flex items-center justify-between mb-8">
+              <Link to="/dashboard" className="flex items-center gap-2">
+                <div className="relative w-8 h-8">
+                  <div className="absolute inset-0 bg-primary rounded-lg opacity-10"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-5 h-5 text-primary"
+                    >
+                      <path d="M11 20h4"></path>
+                      <path d="M12 4v16"></path>
+                      <path d="M18 8l-6 6-6-6"></path>
+                    </svg>
+                  </div>
+                </div>
+                <span className="font-semibold tracking-tight">ChronoTask</span>
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-md hover:bg-secondary"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
-            <ButtonCustom
-              variant="outline"
-              className="w-full justify-start gap-2"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Log out</span>
-            </ButtonCustom>
+
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <input 
+                className="w-full bg-secondary/50 border-none rounded-lg pl-10 pr-4 py-2 text-sm" 
+                placeholder="Search tasks..."
+              />
+            </div>
+
+            <nav className="space-y-1">
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-primary bg-primary/5 font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <CheckSquare className="h-4 w-4" />
+                <span>Tasks</span>
+              </Link>
+              <Link
+                to="/calendar"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Calendar</span>
+              </Link>
+              <Link
+                to="/inbox"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Inbox className="h-4 w-4" />
+                <span>Inbox</span>
+              </Link>
+              <Link
+                to="/reminders"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Clock className="h-4 w-4" />
+                <span>Reminders</span>
+              </Link>
+            </nav>
+
+            <div className="absolute bottom-6 left-6 right-6">
+              <div className="bg-secondary/30 rounded-lg p-4 mb-4">
+                <div className="font-medium mb-1">{user?.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {isAdmin ? "Admin Access" : "User Access"}
+                </div>
+              </div>
+              <ButtonCustom
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Log out</span>
+              </ButtonCustom>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="container py-6 px-4 animate-fade-in">
-        {children}
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 p-6 md:p-8 animate-fade-in">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

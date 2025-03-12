@@ -21,9 +21,9 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: [
+					'Inter',
 					'-apple-system',
 					'BlinkMacSystemFont',
-					'San Francisco',
 					'Segoe UI',
 					'Roboto',
 					'Helvetica Neue',
@@ -74,16 +74,31 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				todo: {
-					DEFAULT: 'hsl(220, 100%, 50%)',
-					light: 'hsl(220, 100%, 95%)',
-					dark: 'hsl(220, 100%, 30%)',
+				note: {
+					yellow: '#FFF8CC',
+					blue: '#CCE5FF',
+					green: '#CCFFE5',
+					red: '#FFCCCC',
+				},
+				task: {
+					red: '#FF5C5C',
+					orange: '#FF9A5C',
+					yellow: '#FFD15C',
+					green: '#5CFF9A',
+					blue: '#5CD1FF',
+					purple: '#9A5CFF',
 				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)',
+				'card-float': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01)',
+				'task': '0 2px 4px rgba(0, 0, 0, 0.06)',
+				'floating': '0 10px 30px rgba(0, 0, 0, 0.08)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -145,11 +160,16 @@ export default {
 				'scale-in': 'scale-in 0.5s ease-out',
 				'scale-out': 'scale-out 0.5s ease-out',
 				'float': 'float 6s ease-in-out infinite',
-				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite'
+				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
+				'float-slow': 'float 8s ease-in-out infinite',
+				'float-slower': 'float 10s ease-in-out infinite 0.5s',
 			},
 			backdropFilter: {
 				'none': 'none',
 				'blur': 'blur(20px)',
+			},
+			backgroundImage: {
+				'dots-pattern': "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='13' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E\")",
 			},
 		}
 	},
