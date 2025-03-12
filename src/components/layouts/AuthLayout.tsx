@@ -1,6 +1,6 @@
-
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -13,17 +13,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   title,
   description,
 }) => {
-  // Set light mode as default
-  useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-dots-pattern">
       <div className="hidden lg:flex flex-col justify-between p-10 bg-secondary">
-        <div>
+        <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative w-10 h-10">
               <div className="absolute inset-0 bg-primary rounded-lg opacity-10 group-hover:opacity-20 transition-opacity"></div>
@@ -46,6 +39,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             </div>
             <span className="text-xl font-semibold tracking-tight">ChronoTask</span>
           </Link>
+          <ThemeSwitcher />
         </div>
         
         <div className="relative">
@@ -82,27 +76,30 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
       
       <div className="flex flex-col justify-center items-center p-6 md:p-10">
         <div className="w-full max-w-md space-y-6">
-          <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 bg-primary rounded-lg opacity-10"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6 text-primary"
-                >
-                  <path d="M11 20h4"></path>
-                  <path d="M12 4v16"></path>
-                  <path d="M18 8l-6 6-6-6"></path>
-                </svg>
+          <div className="lg:hidden flex items-center justify-between mb-8">
+            <Link to="/" className="flex items-center gap-2 group">
+              <div className="relative w-10 h-10">
+                <div className="absolute inset-0 bg-primary rounded-lg opacity-10"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-6 h-6 text-primary"
+                  >
+                    <path d="M11 20h4"></path>
+                    <path d="M12 4v16"></path>
+                    <path d="M18 8l-6 6-6-6"></path>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <span className="text-xl font-semibold tracking-tight">ChronoTask</span>
+              <span className="text-xl font-semibold tracking-tight">ChronoTask</span>
+            </Link>
+            <ThemeSwitcher />
           </div>
           
           <div className="space-y-2 text-center">
