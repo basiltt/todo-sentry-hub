@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useAuth } from "@/lib/auth";
@@ -27,7 +26,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-dots-pattern dark:bg-background">
+    <div className="min-h-screen flex flex-col dark:bg-background">
       {/* Header */}
       <header className="w-full py-4 bg-white/80 backdrop-blur-md dark:bg-black/20 dark:backdrop-blur-md border-b border-border dark:border-white/10">
         <div className="container flex items-center justify-between px-4">

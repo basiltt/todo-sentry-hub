@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -41,7 +40,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-dots-pattern bg-background/90 dark:bg-background/95">
+    <div className="min-h-screen dark:bg-background/95">
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-sidebar-background/90 backdrop-blur-md border-b border-border">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
