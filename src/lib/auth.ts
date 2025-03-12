@@ -1,9 +1,7 @@
 
 import { useState, useEffect } from "react";
 
-// Mock authentication since we're not connected to Supabase yet
-// This will be replaced with actual Supabase auth when connected
-
+// Types
 export type UserRole = "user" | "admin";
 
 export interface User {
@@ -13,72 +11,77 @@ export interface User {
   role: UserRole;
 }
 
-// Mock users
-const MOCK_USERS: User[] = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    name: "Admin User",
-    role: "admin",
-  },
-  {
-    id: "2",
-    email: "user@example.com",
-    name: "Regular User",
-    role: "user",
-  },
-];
+// API base URL
+const API_BASE_URL = 'http://localhost:3001';
 
 // Local storage keys
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
 
-// Mock login function
+// Login function
 export const login = async (email: string, password: string): Promise<User> => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const user = MOCK_USERS.find((u) => u.email === email);
-  
-  if (!user || password !== "password") {
-    throw new Error("Invalid email or password");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Invalid email or password');
+    }
+
+    const data = await response.json();
+    
+    // Store in localStorage
+    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+    
+    return data.user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('An unexpected error occurred');
   }
-
-  // Store in localStorage
-  localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-token");
-  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-  
-  return user;
 };
 
-// Mock register function
+// Register function
 export const register = async (
   email: string,
   password: string,
   name: string
 ): Promise<User> => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, name }),
+    });
 
-  // Check if user already exists
-  const existingUser = MOCK_USERS.find((u) => u.email === email);
-  if (existingUser) {
-    throw new Error("User already exists with this email");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Registration failed');
+    }
+
+    const data = await response.json();
+    
+    // Store in localStorage
+    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+    
+    return data.user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('An unexpected error occurred');
   }
-
-  // Create new user (would be done on the backend in a real app)
-  const newUser: User = {
-    id: Math.random().toString(36).substring(2, 9),
-    email,
-    name,
-    role: "user", // New users are always regular users
-  };
-
-  // Store in localStorage
-  localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-token");
-  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
-  
-  return newUser;
 };
 
 // Logout function
@@ -87,7 +90,31 @@ export const logout = (): void => {
   localStorage.removeItem(AUTH_USER_KEY);
 };
 
-// Get current user
+// Get current user from API
+export const fetchCurrentUser = async (): Promise<User | null> => {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  if (!token) return null;
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user');
+    }
+
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    return null;
+  }
+};
+
+// Get current user from localStorage
 export const getCurrentUser = (): User | null => {
   const userJson = localStorage.getItem(AUTH_USER_KEY);
   if (!userJson) return null;
@@ -112,10 +139,28 @@ export const useAuth = () => {
 
   useEffect(() => {
     // Check if user is logged in on mount
-    const loadUser = () => {
-      const currentUser = getCurrentUser();
-      setUser(currentUser);
-      setLoading(false);
+    const loadUser = async () => {
+      // First try to get from localStorage for quick loading
+      const localUser = getCurrentUser();
+      setUser(localUser);
+      
+      // Then validate with backend
+      try {
+        const currentUser = await fetchCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          // Update localStorage with latest data
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(currentUser));
+        } else if (localUser) {
+          // If backend says no user but we have local data, clear it
+          logout();
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Error validating user token:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadUser();
