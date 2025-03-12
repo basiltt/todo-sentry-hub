@@ -19,6 +19,14 @@ export function ThemeProvider({
   defaultTheme?: Theme;
 }) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
+  
+  // Load saved theme from localStorage on initial render
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      setTheme(savedTheme);
+    }
+  }, []);
 
   useEffect(() => {
     // Update the class on the html element when the theme changes

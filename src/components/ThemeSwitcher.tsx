@@ -19,7 +19,9 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
       onClick={toggleTheme}
       className={cn(
         "rounded-full transition-colors hover:bg-muted/50",
-        theme === "dark" ? "text-yellow-200 hover:text-yellow-100" : "text-slate-600 hover:text-slate-900",
+        theme === "dark" 
+          ? "text-yellow-300 hover:text-yellow-200 hover:bg-slate-800/50" 
+          : "text-slate-600 hover:text-slate-900",
         className
       )}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}

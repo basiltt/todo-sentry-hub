@@ -29,11 +29,11 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-dots-pattern dark:bg-background">
       {/* Header */}
-      <header className="w-full py-4 bg-white/80 backdrop-blur-md dark:bg-background/80 border-b border-border">
+      <header className="w-full py-4 bg-white/80 backdrop-blur-md dark:bg-black/20 dark:backdrop-blur-md border-b border-border dark:border-white/10">
         <div className="container flex items-center justify-between px-4">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative w-8 h-8">
-              <div className="absolute inset-0 bg-primary rounded-lg opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="absolute inset-0 bg-primary rounded-lg opacity-10 dark:opacity-20 group-hover:opacity-20 dark:group-hover:opacity-30 transition-opacity"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -72,11 +72,14 @@ const Index = () => {
               </ButtonCustom>
             ) : (
               <>
-                <ButtonCustom variant="ghost" asChild>
+                <ButtonCustom variant="ghost" asChild className="dark:text-white dark:hover:bg-white/10">
                   <Link to="/login">Log in</Link>
                 </ButtonCustom>
                 <ButtonCustom asChild>
-                  <Link to="/register">Sign up</Link>
+                  <Link to="/dashboard" className="flex items-center gap-1">
+                    Dashboard
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </ButtonCustom>
               </>
             )}
@@ -87,7 +90,7 @@ const Index = () => {
       {/* Hero section */}
       <section className="flex-1 py-16 md:py-20 lg:py-24">
         <div className="container px-4 flex flex-col items-center text-center animate-fade-in">
-          <div className="inline-flex items-center justify-center px-3 py-1 mb-6 border border-border rounded-full bg-background dark:bg-card animate-slide-down">
+          <div className="inline-flex items-center justify-center px-3 py-1 mb-6 border border-border dark:border-white/10 rounded-full bg-background dark:bg-black/30 animate-slide-down">
             <span className="text-xs font-medium">Think, plan, and track</span>
           </div>
           
@@ -107,7 +110,7 @@ const Index = () => {
               </Link>
             </ButtonCustom>
             {!isAuthenticated && (
-              <ButtonCustom asChild variant="outline" size="lg" className="h-12 w-full sm:w-auto">
+              <ButtonCustom asChild variant="outline" size="lg" className="h-12 w-full sm:w-auto dark:border-white/10 dark:text-white dark:hover:bg-white/5">
                 <Link to="/login">Sign in</Link>
               </ButtonCustom>
             )}
@@ -129,7 +132,7 @@ const Index = () => {
             </div>
             
             {/* Notes card */}
-            <div className="absolute left-1/3 -translate-x-1/2 bottom-0 w-56 note-card bg-note-yellow animate-float-slower">
+            <div className="absolute left-1/3 -translate-x-1/2 bottom-0 w-56 note-card bg-note-yellow dark:bg-yellow-900/40 animate-float-slower">
               <div className="text-xs font-medium mb-2 opacity-70">NOTES</div>
               <p className="text-sm font-medium" style={{ fontFamily: "Comic Sans MS, cursive" }}>
                 Take notes to keep track of crucial details, and accomplish more tasks with ease.
@@ -140,11 +143,11 @@ const Index = () => {
             <div className="absolute right-0 top-10 w-64 glass-card p-4 animate-float-slow">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium">Reminders</span>
-                <div className="w-5 h-5 rounded-full flex items-center justify-center bg-primary/10">
+                <div className="w-5 h-5 rounded-full flex items-center justify-center bg-primary/10 dark:bg-primary/20">
                   <Clock className="h-3 w-3 text-primary" />
                 </div>
               </div>
-              <div className="p-2 bg-white rounded-lg shadow-sm mb-2">
+              <div className="p-2 bg-white dark:bg-black/30 rounded-lg shadow-sm mb-2">
                 <div className="text-xs font-medium">Today's Meeting</div>
                 <div className="text-xs text-muted-foreground">Call with marketing team</div>
               </div>
@@ -156,7 +159,7 @@ const Index = () => {
             
             {/* Search UI */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 glass-card p-4 animate-float">
-              <div className="flex items-center bg-white/60 rounded-lg p-2 shadow-sm">
+              <div className="flex items-center bg-white/60 dark:bg-white/5 dark:text-white rounded-lg p-2 shadow-sm">
                 <Search className="h-4 w-4 text-muted-foreground mr-2" />
                 <span className="text-sm text-muted-foreground">Search tasks...</span>
               </div>
@@ -166,7 +169,7 @@ const Index = () => {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-16 md:py-24 bg-white dark:bg-card">
+      <section id="features" className="py-16 md:py-24 bg-white dark:bg-card/50">
         <div className="container px-4">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -181,9 +184,9 @@ const Index = () => {
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="floating-card p-6 dark:bg-card dark:border dark:border-border"
+                className="floating-card p-6 dark:bg-card dark:border dark:border-white/5"
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-medium mb-2">{feature.title}</h3>
@@ -195,7 +198,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section id="pricing" className="py-16 md:py-24 bg-gradient-to-t from-secondary/50 to-transparent dark:from-accent/5 dark:to-transparent">
+      <section id="pricing" className="py-16 md:py-24 bg-gradient-to-t from-secondary/50 to-transparent dark:from-accent/10 dark:to-transparent">
         <div className="container px-4 text-center animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to be more productive?
@@ -214,12 +217,12 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-card border-t border-border py-12">
+      <footer className="bg-white dark:bg-card/50 border-t border-border dark:border-white/5 py-12">
         <div className="container px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
               <div className="relative w-8 h-8 mr-2">
-                <div className="absolute inset-0 bg-primary rounded-lg opacity-10"></div>
+                <div className="absolute inset-0 bg-primary rounded-lg opacity-10 dark:opacity-20"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

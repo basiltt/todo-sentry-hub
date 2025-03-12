@@ -46,22 +46,22 @@
   }
 
   .dark {
-    --background: 222 47% 8%;
+    --background: 222 47% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 12%;
+    --card: 222 47% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 12%;
+    --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 196 94% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 47% 15%;
+    --secondary: 222 47% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 222 47% 15%;
+    --muted: 222 47% 12%;
     --muted-foreground: 215 16% 75%;
 
     --accent: 196 94% 20%;
@@ -70,17 +70,17 @@
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 222 47% 18%;
-    --input: 222 47% 18%;
+    --border: 222 47% 15%;
+    --input: 222 47% 15%;
     --ring: 196 94% 48%;
 
-    --sidebar-background: 222 47% 10%;
+    --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 196 94% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 47% 15%;
+    --sidebar-accent: 222 47% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 47% 18%;
+    --sidebar-border: 222 47% 15%;
     --sidebar-ring: 196 94% 48%;
   }
 }
@@ -127,23 +127,23 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/90 backdrop-blur-md border border-white/20 shadow-floating rounded-2xl transition-all duration-300 hover:shadow-card-hover;
+    @apply bg-white/90 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/5 shadow-floating rounded-2xl transition-all duration-300 hover:shadow-card-hover;
   }
   
   .floating-card {
-    @apply bg-white rounded-2xl shadow-floating transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
+    @apply bg-white dark:bg-card/80 rounded-2xl shadow-floating transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 dark:border dark:border-white/5;
   }
   
   .note-card {
-    @apply rounded-xl shadow-task p-4 rotate-1 transition-transform hover:rotate-0 duration-300;
+    @apply rounded-xl shadow-task p-4 rotate-1 transition-transform hover:rotate-0 duration-300 dark:bg-opacity-80;
   }
   
   .task-item {
-    @apply bg-white rounded-xl shadow-task p-4 transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
+    @apply bg-white dark:bg-card/80 rounded-xl shadow-task p-4 transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 dark:border dark:border-white/5;
   }
   
   .progress-bar {
-    @apply h-1.5 rounded-full overflow-hidden bg-gray-100;
+    @apply h-1.5 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800;
   }
   
   .progress-value {
