@@ -131,15 +131,25 @@ export const isAuthenticated = (): boolean => {
 
 // React hook for authentication
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(getCurrentUser());
+  const [user, setUser] = useState<User | null>(() => getCurrentUser());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Listen for storage events (for multi-tab support)
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === AUTH_USER_KEY) {
-        const localUser = getCurrentUser();
-        setUser(localUser);
+        if (event.newValue) {
+          try {
+            const updatedUser = JSON.parse(event.newValue) as User;
+            setUser(updatedUser);
+          } catch (e) {
+            console.error("Error parsing user from storage event", e);
+          }
+        } else {
+          setUser(null);
+        }
+      } else if (event.key === AUTH_TOKEN_KEY && !event.newValue) {
+        setUser(null);
       }
     };
 
@@ -151,6 +161,7 @@ export const useAuth = () => {
   }, []);
 
   const loginFn = async (email: string, password: string) => {
+    setLoading(true);
     try {
       const user = await login(email, password);
       setUser(user);
@@ -158,10 +169,13 @@ export const useAuth = () => {
     } catch (error) {
       console.error('Login error in hook:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const registerFn = async (email: string, password: string, name: string) => {
+    setLoading(true);
     try {
       const user = await register(email, password, name);
       setUser(user);
@@ -169,6 +183,8 @@ export const useAuth = () => {
     } catch (error) {
       console.error('Register error in hook:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
