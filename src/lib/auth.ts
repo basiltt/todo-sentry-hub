@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 
 // Types
@@ -11,7 +10,7 @@ export interface User {
   role: UserRole;
 }
 
-// API base URL
+// API base URL - Making sure it matches the NestJS server
 const API_BASE_URL = 'http://localhost:3001';
 
 // Local storage keys
@@ -27,6 +26,7 @@ export const login = async (email: string, password: string): Promise<User> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
+      credentials: 'include',  // Include cookies for CORS if needed
     });
 
     if (!response.ok) {
@@ -42,6 +42,7 @@ export const login = async (email: string, password: string): Promise<User> => {
     
     return data.user;
   } catch (error) {
+    console.error('Login error:', error);
     if (error instanceof Error) {
       throw error;
     }
@@ -56,16 +57,19 @@ export const register = async (
   name: string
 ): Promise<User> => {
   try {
+    console.log('Registering user:', { email, name });
+    
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password, name }),
+      credentials: 'include', // Include cookies for CORS if needed
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({ message: 'Registration failed' }));
       throw new Error(errorData.message || 'Registration failed');
     }
 
@@ -77,6 +81,7 @@ export const register = async (
     
     return data.user;
   } catch (error) {
+    console.error('Registration error:', error);
     if (error instanceof Error) {
       throw error;
     }
@@ -180,15 +185,25 @@ export const useAuth = () => {
   }, []);
 
   const loginFn = async (email: string, password: string) => {
-    const user = await login(email, password);
-    setUser(user);
-    return user;
+    try {
+      const user = await login(email, password);
+      setUser(user);
+      return user;
+    } catch (error) {
+      console.error('Login error in hook:', error);
+      throw error;
+    }
   };
 
   const registerFn = async (email: string, password: string, name: string) => {
-    const user = await register(email, password, name);
-    setUser(user);
-    return user;
+    try {
+      const user = await register(email, password, name);
+      setUser(user);
+      return user;
+    } catch (error) {
+      console.error('Register error in hook:', error);
+      throw error;
+    }
   };
 
   const logoutFn = () => {
