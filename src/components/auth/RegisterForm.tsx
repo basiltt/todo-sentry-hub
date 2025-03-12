@@ -6,6 +6,7 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { AlertCircle } from "lucide-react";
 
 const RegisterForm: React.FC = () => {
   const [name, setName] = useState("");
@@ -23,18 +24,45 @@ const RegisterForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Validate input
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
+      }
+
       await register(email, password, name);
+      
       toast({
         title: "Registration successful!",
         description: "Your account has been created.",
       });
+      
+      // Check if email confirmation is required
+      toast({
+        title: "Check your email",
+        description: "You may need to confirm your email before logging in.",
+      });
+      
       navigate("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to register");
+      console.error("Registration error:", err);
+      
+      // Handle specific error cases
+      let errorMessage = "Failed to register";
+      
+      if (err instanceof Error) {
+        if (err.message.includes("User already registered")) {
+          errorMessage = "This email is already registered. Please log in instead.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
+      
       toast({
         variant: "destructive",
         title: "Registration failed",
-        description: err instanceof Error ? err.message : "Please try again with different credentials",
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -84,12 +112,13 @@ const RegisterForm: React.FC = () => {
           className="h-11"
         />
         <p className="text-xs text-muted-foreground">
-          Password must be at least 8 characters
+          Password must be at least 6 characters
         </p>
       </div>
 
       {error && (
-        <div className="text-sm text-destructive">
+        <div className="text-sm text-destructive flex items-center gap-2">
+          <AlertCircle className="h-4 w-4" />
           {error}
         </div>
       )}

@@ -93,7 +93,7 @@ export const register = async (
   name: string
 ): Promise<User> => {
   try {
-    // Register user
+    // Register user with Supabase Auth
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -110,18 +110,33 @@ export const register = async (
       throw new Error('No user data returned');
     }
     
-    // Create profile
+    // Create profile - this should be handled by the database trigger,
+    // but we'll create it explicitly as a fallback
     const profile = {
       id: data.user.id,
       name,
       role: 'user' as UserRole,
     };
     
-    const { error: profileError } = await supabase
+    // Check if profile already exists (it should be created by the trigger)
+    const { data: existingProfile, error: profileCheckError } = await supabase
       .from('profiles')
-      .insert([profile]);
+      .select('*')
+      .eq('id', data.user.id)
+      .maybeSingle();
       
-    if (profileError) throw profileError;
+    // Only insert profile if it doesn't exist yet
+    if (!existingProfile && !profileCheckError) {
+      console.log('Creating profile manually since trigger did not create one');
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([profile]);
+        
+      if (profileError) {
+        console.error('Error creating profile:', profileError);
+        // Continue anyway, as the trigger might create the profile later
+      }
+    }
     
     // Create user object
     const user: User = {
@@ -131,10 +146,12 @@ export const register = async (
       role: 'user',
     };
     
-    // Store session in local storage
+    // Store session in local storage if available
     if (data.session) {
       localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    } else {
+      console.log('No session returned from signup - email confirmation may be required');
     }
     
     return user;
