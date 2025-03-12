@@ -131,24 +131,15 @@ export const isAuthenticated = (): boolean => {
 
 // React hook for authentication
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(getCurrentUser());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if user is logged in on mount
-    const loadUser = () => {
-      // Get from localStorage
-      const localUser = getCurrentUser();
-      setUser(localUser);
-      setLoading(false);
-    };
-
-    loadUser();
-
     // Listen for storage events (for multi-tab support)
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === AUTH_USER_KEY) {
-        loadUser();
+        const localUser = getCurrentUser();
+        setUser(localUser);
       }
     };
 
