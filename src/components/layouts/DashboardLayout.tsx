@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -41,12 +42,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen dark:bg-background/95">
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-sidebar-background/90 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#1A1F2C] backdrop-blur-md border-b border-border dark:border-slate-800">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-secondary"
+              className="md:hidden p-2 rounded-md hover:bg-secondary dark:hover:bg-slate-800"
             >
               {mobileMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -84,7 +85,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 onClick={() => setSearchActive(!searchActive)}
                 className={cn(
                   "flex items-center gap-2 p-2 rounded-full transition-all duration-300",
-                  searchActive ? "bg-secondary/80 w-64" : "bg-secondary/50 w-10 hover:bg-secondary/80"
+                  searchActive 
+                    ? "bg-secondary/80 dark:bg-slate-800/80 w-64" 
+                    : "bg-secondary/50 dark:bg-slate-800/50 w-10 hover:bg-secondary/80 dark:hover:bg-slate-700/80"
                 )}
               >
                 <Search className="h-4 w-4 min-w-4 text-muted-foreground" />
@@ -102,7 +105,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-secondary/80 transition-colors"
+              className="p-2 rounded-full hover:bg-secondary/80 dark:hover:bg-slate-800/80 transition-colors"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
@@ -117,7 +120,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="rounded-full"
+                className="rounded-full dark:hover:bg-slate-800"
                 aria-label="Logout"
               >
                 <LogOut className="h-4 w-4" />
@@ -134,21 +137,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </header>
 
       <div className="flex flex-1 min-h-[calc(100vh-4rem)]">
-        <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border bg-sidebar-background/50 dark:bg-sidebar-background">
+        <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border dark:border-slate-800 bg-sidebar-background/50 dark:bg-[#1A1F2C]">
           <nav className="space-y-1 mt-6">
             <Link
               to="/dashboard"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-primary bg-primary/10 font-medium"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-primary bg-primary/10 dark:bg-primary/20 font-medium"
             >
               <CheckSquare className="h-4 w-4" />
               <span>Tasks</span>
             </Link>
           </nav>
           
-          <div className="mt-auto pt-4 border-t border-border">
+          <div className="mt-auto pt-4 border-t border-border dark:border-slate-800">
             <Link
               to="/profile"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 dark:hover:bg-slate-800/80 text-muted-foreground"
             >
               <User className="h-4 w-4" />
               <span>Profile</span>
@@ -156,7 +159,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             {isAdmin && (
               <Link
                 to="/settings"
-                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
+                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 dark:hover:bg-slate-800/80 text-muted-foreground"
               >
                 <Settings className="h-4 w-4" />
                 <span>Settings</span>
@@ -170,7 +173,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             mobileMenuOpen ? "block" : "hidden"
           }`}
         >
-          <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-background p-6 shadow-lg animate-slide-right">
+          <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-background dark:bg-[#1A1F2C] p-6 shadow-lg animate-slide-right">
             <div className="flex items-center justify-between mb-8">
               <Link to="/dashboard" className="flex items-center gap-2">
                 <div className="relative w-8 h-8">
@@ -196,7 +199,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-md hover:bg-secondary"
+                className="p-2 rounded-md hover:bg-secondary dark:hover:bg-slate-800"
                 aria-label="Close menu"
               >
                 <X className="h-5 w-5" />
@@ -206,7 +209,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <div className="relative mb-6">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <input 
-                className="w-full bg-secondary/50 border-none rounded-lg pl-10 pr-4 py-2 text-sm" 
+                className="w-full bg-secondary/50 dark:bg-slate-800/50 border-none rounded-lg pl-10 pr-4 py-2 text-sm" 
                 placeholder="Search tasks..."
               />
             </div>
@@ -214,7 +217,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <nav className="space-y-1">
               <Link
                 to="/dashboard"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-primary bg-primary/5 font-medium"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-primary bg-primary/5 dark:bg-primary/20 font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <CheckSquare className="h-4 w-4" />
@@ -223,7 +226,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </nav>
 
             <div className="absolute bottom-6 left-6 right-6">
-              <div className="bg-secondary/30 rounded-lg p-4 mb-4">
+              <div className="bg-secondary/30 dark:bg-slate-800/50 rounded-lg p-4 mb-4">
                 <div className="font-medium mb-1">{user?.name}</div>
                 <div className="text-sm text-muted-foreground">
                   {isAdmin ? "Admin Access" : "User Access"}
@@ -231,7 +234,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
               <ButtonCustom
                 variant="outline"
-                className="w-full justify-start gap-2"
+                className="w-full justify-start gap-2 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4" />
