@@ -52,7 +52,7 @@ const ButtonCustom = React.forwardRef<HTMLButtonElement, ButtonCustomProps>(
           className={cn(
             buttonVariants({ variant, size, className }),
             isLoading && "opacity-80 pointer-events-none",
-            "transition-all duration-200 ease-in-out"
+            "transition-all duration-200 ease-in-out flex items-center gap-2"
           )}
           ref={ref}
           disabled={isLoading || props.disabled}
@@ -70,7 +70,7 @@ const ButtonCustom = React.forwardRef<HTMLButtonElement, ButtonCustomProps>(
         className={cn(
           buttonVariants({ variant, size, className }),
           isLoading && "opacity-80 pointer-events-none",
-          "transition-all duration-200 ease-in-out"
+          "transition-all duration-200 ease-in-out flex items-center gap-2"
         )}
         ref={ref}
         disabled={isLoading || props.disabled}

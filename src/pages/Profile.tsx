@@ -22,8 +22,8 @@ const Profile = () => {
           </div>
           
           <ButtonCustom size="sm" className="text-white dark:text-white">
-            <Save className="h-4 w-4 mr-2" />
-            Save Changes
+            <Save className="h-4 w-4" />
+            <span>Save Changes</span>
           </ButtonCustom>
         </div>
 

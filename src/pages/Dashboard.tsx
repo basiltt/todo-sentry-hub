@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
@@ -6,7 +7,7 @@ import TodoForm from "@/components/todos/TodoForm";
 import { useAuth } from "@/lib/auth";
 import { getTodos, addTodo, toggleTodoComplete, editTodo, deleteTodo, Todo } from "@/lib/todo";
 import { useToast } from "@/components/ui/use-toast";
-import { Calendar, CheckSquare, Plus } from "lucide-react";
+import { CheckSquare } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated, isAdmin } = useAuth();
@@ -132,12 +133,6 @@ const Dashboard: React.FC = () => {
   const pendingTodos = todos.length - completedTodos;
   const completionRate = todos.length > 0 ? Math.round((completedTodos / todos.length) * 100) : 0;
 
-  // Quick actions for the dashboard
-  const quickActions = [
-    { icon: <Plus className="h-4 w-4" />, label: "Add task", color: "bg-task-blue text-white" },
-    { icon: <Calendar className="h-4 w-4" />, label: "Schedule", color: "bg-task-purple text-white" },
-  ];
-
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto">
@@ -171,19 +166,6 @@ const Dashboard: React.FC = () => {
               ></div>
             </div>
           </div>
-        </div>
-        
-        {/* Quick actions */}
-        <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
-          {quickActions.map((action, index) => (
-            <button 
-              key={index}
-              className={`${action.color} rounded-full px-4 py-2 flex items-center gap-2 text-sm font-medium shadow-sm hover:opacity-90 transition-opacity`}
-            >
-              {action.icon}
-              {action.label}
-            </button>
-          ))}
         </div>
 
         <TodoForm onAdd={handleAddTodo} isLoading={isAdding} />

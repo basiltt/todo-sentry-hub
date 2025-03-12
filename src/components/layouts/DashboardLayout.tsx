@@ -7,9 +7,7 @@ import {
   LogOut, 
   Menu, 
   X, 
-  Home, 
   User, 
-  Settings, 
   Moon, 
   Sun, 
   CheckSquare,
@@ -156,15 +154,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <User className="h-4 w-4" />
               <span>Profile</span>
             </Link>
-            {isAdmin && (
-              <Link
-                to="/settings"
-                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 dark:hover:bg-slate-800/80 text-muted-foreground"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </Link>
-            )}
           </div>
         </aside>
 

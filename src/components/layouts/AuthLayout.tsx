@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -50,26 +51,26 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <div className="w-40 h-40 bg-primary/10 rounded-full filter blur-3xl opacity-70 animate-float"></div>
           </div>
           
-          <div className="relative bg-white/30 backdrop-blur-sm rounded-xl border border-white/30 p-8 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Task Management Made Simple</h2>
-            <p className="text-muted-foreground mb-6">
+          <div className="relative bg-white/30 backdrop-blur-sm dark:bg-white/10 rounded-xl border border-white/30 dark:border-white/20 p-8 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4 dark:text-white">Task Management Made Simple</h2>
+            <p className="text-muted-foreground dark:text-gray-300 mb-6">
               Organize, track, and prioritize your tasks with ease. Stay on top of your 
               deadlines and collaborate with your team seamlessly.
             </p>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/40 rounded-lg p-4 flex flex-col items-center justify-center text-center">
-                <div className="font-bold text-3xl mb-1 text-primary">1000+</div>
-                <div className="text-sm text-muted-foreground">Active Users</div>
+              <div className="bg-white/40 dark:bg-white/20 rounded-lg p-4 flex flex-col items-center justify-center text-center">
+                <div className="font-bold text-3xl mb-1 text-primary dark:text-sky-400">1000+</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Active Users</div>
               </div>
-              <div className="bg-white/40 rounded-lg p-4 flex flex-col items-center justify-center text-center">
-                <div className="font-bold text-3xl mb-1 text-primary">50k+</div>
-                <div className="text-sm text-muted-foreground">Tasks Completed</div>
+              <div className="bg-white/40 dark:bg-white/20 rounded-lg p-4 flex flex-col items-center justify-center text-center">
+                <div className="font-bold text-3xl mb-1 text-primary dark:text-sky-400">50k+</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-300">Tasks Completed</div>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground dark:text-gray-400">
           &copy; {new Date().getFullYear()} ChronoTask. All rights reserved.
         </div>
       </div>
