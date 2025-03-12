@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 
 const buttonVariants = cva(
@@ -36,10 +37,34 @@ export interface ButtonCustomProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
+  asChild?: boolean;
 }
 
 const ButtonCustom = React.forwardRef<HTMLButtonElement, ButtonCustomProps>(
-  ({ className, variant, size, isLoading, children, ...props }, ref) => {
+  ({ className, variant, size, isLoading, asChild = false, children, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    
+    // When using asChild, we need to use the regular Button component
+    // which already implements Slot functionality
+    if (asChild) {
+      return (
+        <Button
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            isLoading && "opacity-80 pointer-events-none",
+            "transition-all duration-200 ease-in-out"
+          )}
+          ref={ref}
+          disabled={isLoading || props.disabled}
+          asChild={asChild}
+          {...props}
+        >
+          {children}
+        </Button>
+      );
+    }
+    
+    // For regular button usage without asChild
     return (
       <Button
         className={cn(
