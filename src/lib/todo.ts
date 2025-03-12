@@ -10,35 +10,44 @@ export interface Todo {
   createdAt: Date;
 }
 
-// API base URL
-const API_BASE_URL = 'http://localhost:3001';
+// API base URL - Using a mock implementation since the NestJS server is not available
+const API_BASE_URL = '/api'; // Changed from 'http://localhost:3001' to a relative path
+
+// Local storage key for mock todos
+const TODOS_STORAGE_KEY = "mock_todos";
 
 // Get auth token from local storage
 const getAuthToken = (): string | null => {
   return localStorage.getItem("auth_token");
 };
 
+// Initialize mock todos in localStorage if not already present
+const initializeMockTodos = () => {
+  if (!localStorage.getItem(TODOS_STORAGE_KEY)) {
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify([]));
+  }
+};
+
 // Get todos for a user
 export const getTodos = async (currentUser: User): Promise<Todo[]> => {
   const token = getAuthToken();
   if (!token) throw new Error('Not authenticated');
-
+  
   try {
-    const response = await fetch(`${API_BASE_URL}/todos`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch todos');
-    }
-
-    const todos = await response.json();
+    // Initialize mock todos if not already done
+    initializeMockTodos();
     
-    // Ensure createdAt is a Date object
-    return todos.map((todo: any) => ({
+    // Get todos from localStorage
+    const todosJson = localStorage.getItem(TODOS_STORAGE_KEY);
+    const allTodos = JSON.parse(todosJson || '[]');
+    
+    // Filter todos based on user role
+    const userTodos = currentUser.role === 'admin' 
+      ? allTodos 
+      : allTodos.filter((todo: Todo) => todo.userId === currentUser.id);
+    
+    // Convert string dates to Date objects
+    return userTodos.map((todo: any) => ({
       ...todo,
       createdAt: new Date(todo.createdAt),
     }));
@@ -54,24 +63,31 @@ export const addTodo = async (text: string, currentUser: User): Promise<Todo> =>
   if (!token) throw new Error('Not authenticated');
 
   try {
-    const response = await fetch(`${API_BASE_URL}/todos`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ text }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to add todo');
-    }
-
-    const todo = await response.json();
+    // Initialize mock todos if not already done
+    initializeMockTodos();
+    
+    // Get existing todos
+    const todosJson = localStorage.getItem(TODOS_STORAGE_KEY);
+    const todos = JSON.parse(todosJson || '[]');
+    
+    // Create a new todo
+    const newTodo = {
+      id: `todo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      text,
+      completed: false,
+      userId: currentUser.id,
+      userName: currentUser.name,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Add the new todo to the list
+    todos.unshift(newTodo);
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+    
+    // Return the new todo with the createdAt field as a Date object
     return {
-      ...todo,
-      createdAt: new Date(todo.createdAt),
+      ...newTodo,
+      createdAt: new Date(newTodo.createdAt),
     };
   } catch (error) {
     console.error("Error adding todo:", error);
@@ -85,22 +101,32 @@ export const toggleTodoComplete = async (id: string, currentUser: User): Promise
   if (!token) throw new Error('Not authenticated');
 
   try {
-    const response = await fetch(`${API_BASE_URL}/todos/${id}/toggle`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to toggle todo');
+    // Initialize mock todos if not already done
+    initializeMockTodos();
+    
+    // Get existing todos
+    const todosJson = localStorage.getItem(TODOS_STORAGE_KEY);
+    const todos = JSON.parse(todosJson || '[]');
+    
+    // Find the todo to toggle
+    const todoIndex = todos.findIndex((todo: Todo) => todo.id === id);
+    if (todoIndex === -1) {
+      throw new Error('Todo not found');
     }
-
-    const todo = await response.json();
+    
+    // Check if user is authorized to modify this todo
+    if (currentUser.role !== 'admin' && todos[todoIndex].userId !== currentUser.id) {
+      throw new Error('Unauthorized to modify this todo');
+    }
+    
+    // Toggle the completion status
+    todos[todoIndex].completed = !todos[todoIndex].completed;
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+    
+    // Return the updated todo with the createdAt field as a Date object
     return {
-      ...todo,
-      createdAt: new Date(todo.createdAt),
+      ...todos[todoIndex],
+      createdAt: new Date(todos[todoIndex].createdAt),
     };
   } catch (error) {
     console.error("Error toggling todo:", error);
@@ -114,24 +140,32 @@ export const editTodo = async (id: string, text: string, currentUser: User): Pro
   if (!token) throw new Error('Not authenticated');
 
   try {
-    const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ text }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to edit todo');
+    // Initialize mock todos if not already done
+    initializeMockTodos();
+    
+    // Get existing todos
+    const todosJson = localStorage.getItem(TODOS_STORAGE_KEY);
+    const todos = JSON.parse(todosJson || '[]');
+    
+    // Find the todo to edit
+    const todoIndex = todos.findIndex((todo: Todo) => todo.id === id);
+    if (todoIndex === -1) {
+      throw new Error('Todo not found');
     }
-
-    const todo = await response.json();
+    
+    // Check if user is authorized to modify this todo
+    if (currentUser.role !== 'admin' && todos[todoIndex].userId !== currentUser.id) {
+      throw new Error('Unauthorized to modify this todo');
+    }
+    
+    // Update the todo text
+    todos[todoIndex].text = text;
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
+    
+    // Return the updated todo with the createdAt field as a Date object
     return {
-      ...todo,
-      createdAt: new Date(todo.createdAt),
+      ...todos[todoIndex],
+      createdAt: new Date(todos[todoIndex].createdAt),
     };
   } catch (error) {
     console.error("Error editing todo:", error);
@@ -145,17 +179,27 @@ export const deleteTodo = async (id: string, currentUser: User): Promise<void> =
   if (!token) throw new Error('Not authenticated');
 
   try {
-    const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to delete todo');
+    // Initialize mock todos if not already done
+    initializeMockTodos();
+    
+    // Get existing todos
+    const todosJson = localStorage.getItem(TODOS_STORAGE_KEY);
+    const todos = JSON.parse(todosJson || '[]');
+    
+    // Find the todo to delete
+    const todoIndex = todos.findIndex((todo: Todo) => todo.id === id);
+    if (todoIndex === -1) {
+      throw new Error('Todo not found');
     }
+    
+    // Check if user is authorized to delete this todo
+    if (currentUser.role !== 'admin' && todos[todoIndex].userId !== currentUser.id) {
+      throw new Error('Unauthorized to delete this todo');
+    }
+    
+    // Remove the todo from the list
+    todos.splice(todoIndex, 1);
+    localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos));
   } catch (error) {
     console.error("Error deleting todo:", error);
     throw error;
