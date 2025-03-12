@@ -131,6 +131,7 @@ export const isAuthenticated = (): boolean => {
 
 // React hook for authentication
 export const useAuth = () => {
+  // Use lazy initialization to avoid calling getCurrentUser() on every render
   const [user, setUser] = useState<User | null>(() => getCurrentUser());
   const [loading, setLoading] = useState(false);
 
