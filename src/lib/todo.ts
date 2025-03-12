@@ -16,19 +16,19 @@ interface TodoRow {
   id: string;
   text: string;
   completed: boolean;
-  userId: string;
-  userName: string;
-  createdAt: string;
+  userid: string;    // Note: lowercase in database
+  username: string;  // Note: lowercase in database
+  createdat: string; // Note: lowercase in database
 }
 
 // Convert database row to Todo model
-const mapRowToTodo = (row: any): Todo => ({
+const mapRowToTodo = (row: TodoRow): Todo => ({
   id: row.id,
   text: row.text,
   completed: row.completed,
-  userId: row.userId,
-  userName: row.userName,
-  createdAt: new Date(row.createdAt),
+  userId: row.userid,       // Map from lowercase to camelCase
+  userName: row.username,   // Map from lowercase to camelCase
+  createdAt: new Date(row.createdat), // Map from lowercase to camelCase
 });
 
 // Get todos for a user
@@ -37,14 +37,14 @@ export const getTodos = async (currentUser: User): Promise<Todo[]> => {
     const { data, error } = await supabase
       .from('todos')
       .select('*')
-      .order('createdAt', { ascending: false });
+      .order('createdat', { ascending: false });
       
     if (error) throw error;
     
     // Filter todos based on user role
     const userTodos = currentUser.role === 'admin' 
       ? data 
-      : data.filter((todo: any) => todo.userId === currentUser.id);
+      : data.filter((todo: any) => todo.userid === currentUser.id);
     
     // Convert to Todo objects
     return userTodos.map(mapRowToTodo);
@@ -60,9 +60,9 @@ export const addTodo = async (text: string, currentUser: User): Promise<Todo> =>
     const newTodo = {
       text,
       completed: false,
-      userId: currentUser.id,
-      userName: currentUser.name,
-      createdAt: new Date().toISOString()
+      userid: currentUser.id,       // Use lowercase to match DB schema
+      username: currentUser.name,   // Use lowercase to match DB schema
+      createdat: new Date().toISOString() // Use lowercase to match DB schema
     };
     
     const { data, error } = await supabase
