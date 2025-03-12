@@ -9,7 +9,6 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Reminders from "./pages/Reminders";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -30,7 +29,6 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/reminders" element={<Reminders />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
