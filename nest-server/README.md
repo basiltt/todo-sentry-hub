@@ -60,6 +60,8 @@ The project is configured to work properly with NestJS decorators. Make sure the
 }
 ```
 
+The `useDefineForClassFields` setting is particularly important as it affects how TypeScript handles decorators in class fields, which is critical for NestJS's validation decorators.
+
 ## Development Notes
 - The backend uses JWT for authentication
 - Default users are available for testing (admin@example.com and user@example.com, both with password "password")
