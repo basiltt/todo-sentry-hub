@@ -21,7 +21,7 @@ const Profile = () => {
             </p>
           </div>
           
-          <ButtonCustom size="sm">
+          <ButtonCustom size="sm" className="text-white dark:text-white">
             <Save className="h-4 w-4 mr-2" />
             Save Changes
           </ButtonCustom>
@@ -131,9 +131,9 @@ const Profile = () => {
                       Update your password to maintain security
                     </p>
                   </div>
-                  <ButtonCustom variant="outline" size="sm">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Change
+                  <ButtonCustom variant="outline" size="sm" className="inline-flex items-center gap-2">
+                    <Edit className="h-4 w-4" />
+                    <span>Change</span>
                   </ButtonCustom>
                 </div>
                 
@@ -144,9 +144,9 @@ const Profile = () => {
                       Configure how and when you receive notifications
                     </p>
                   </div>
-                  <ButtonCustom variant="outline" size="sm">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Configure
+                  <ButtonCustom variant="outline" size="sm" className="inline-flex items-center gap-2">
+                    <Edit className="h-4 w-4" />
+                    <span>Configure</span>
                   </ButtonCustom>
                 </div>
                 
@@ -157,9 +157,9 @@ const Profile = () => {
                       Link your accounts for seamless integration
                     </p>
                   </div>
-                  <ButtonCustom variant="outline" size="sm">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Manage
+                  <ButtonCustom variant="outline" size="sm" className="inline-flex items-center gap-2">
+                    <Edit className="h-4 w-4" />
+                    <span>Manage</span>
                   </ButtonCustom>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,6 +126,10 @@
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
+  
+  button, a {
+    @apply text-current;
+  }
 }
 
 @layer components {
@@ -150,5 +155,10 @@
   
   .progress-value {
     @apply h-full rounded-full transition-all duration-500;
+  }
+  
+  /* Button-specific styles */
+  .btn-icon-text {
+    @apply inline-flex items-center gap-2;
   }
 }
