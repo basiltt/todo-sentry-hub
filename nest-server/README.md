@@ -6,6 +6,7 @@ This is the NestJS backend for the Todo application with role-based access contr
 ## Installation
 
 ```bash
+cd nest-server
 npm install
 ```
 
@@ -45,3 +46,21 @@ npm run start:prod
 ## Role-Based Access
 - Admin users can see and manage all todos
 - Regular users can only see and manage their own todos
+
+## TypeScript Configuration
+The project is configured to work properly with NestJS decorators. Make sure the following settings are present in your tsconfig.json:
+
+```json
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  }
+}
+```
+
+## Development Notes
+- The backend uses JWT for authentication
+- Default users are available for testing (admin@example.com and user@example.com, both with password "password")
+- For production, consider implementing proper password hashing and using environment variables for secrets
