@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useAuth } from "@/lib/auth";
-import { ArrowRight, CheckCircle, ShieldCheck, Clock, Search, Calendar, Tag } from "lucide-react";
+import { ArrowRight, CheckCircle, ShieldCheck, Clock, Search, Tag } from "lucide-react";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const Index = () => {
@@ -15,9 +15,9 @@ const Index = () => {
       description: "Create, update, and organize your tasks with a clean, intuitive interface designed for clarity."
     },
     {
-      icon: <Calendar className="h-5 w-5 text-primary" />,
-      title: "Smart Scheduling",
-      description: "Plan your day effectively with our intelligent scheduling system that optimizes your productivity."
+      icon: <Clock className="h-5 w-5 text-primary" />,
+      title: "Smart Reminders",
+      description: "Never miss a deadline with our intelligent reminder system that keeps you on track."
     },
     {
       icon: <Tag className="h-5 w-5 text-primary" />,
@@ -122,12 +122,12 @@ const Index = () => {
             <div className="absolute left-0 top-0 w-64 glass-card p-4 animate-float">
               <div className="flex items-center mb-3">
                 <div className="w-5 h-5 rounded-full bg-task-blue mr-2"></div>
-                <span className="text-sm font-medium">Today's meeting</span>
+                <span className="text-sm font-medium">Project planning</span>
               </div>
-              <p className="text-xs text-muted-foreground mb-3">Call with marketing team about Q3 campaign</p>
+              <p className="text-xs text-muted-foreground mb-3">Prepare Q3 product roadmap and update stakeholders</p>
               <div className="flex items-center text-xs text-muted-foreground">
                 <Clock className="h-3 w-3 mr-1" />
-                <span>13:00 - 13:45</span>
+                <span>Due tomorrow</span>
               </div>
             </div>
             
@@ -139,7 +139,7 @@ const Index = () => {
               </p>
             </div>
             
-            {/* Calendar card */}
+            {/* Reminders card */}
             <div className="absolute right-0 top-10 w-64 glass-card p-4 animate-float-slow">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium">Reminders</span>
@@ -148,12 +148,12 @@ const Index = () => {
                 </div>
               </div>
               <div className="p-2 bg-white dark:bg-black/30 rounded-lg shadow-sm mb-2">
-                <div className="text-xs font-medium">Today's Meeting</div>
-                <div className="text-xs text-muted-foreground">Call with marketing team</div>
+                <div className="text-xs font-medium">Project Deadline</div>
+                <div className="text-xs text-muted-foreground">Complete product roadmap</div>
               </div>
               <div className="text-xs text-muted-foreground flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                <span>13:00 - 13:45</span>
+                <span>Tomorrow at 5:00 PM</span>
               </div>
             </div>
             

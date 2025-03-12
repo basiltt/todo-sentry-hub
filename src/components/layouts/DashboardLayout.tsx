@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -11,8 +12,6 @@ import {
   Settings, 
   Moon, 
   Sun, 
-  Inbox, 
-  Calendar, 
   CheckSquare,
   Clock,
   Search
@@ -147,20 +146,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <span>Tasks</span>
             </Link>
             <Link
-              to="/calendar"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
-            >
-              <Calendar className="h-4 w-4" />
-              <span>Calendar</span>
-            </Link>
-            <Link
-              to="/inbox"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
-            >
-              <Inbox className="h-4 w-4" />
-              <span>Inbox</span>
-            </Link>
-            <Link
               to="/reminders"
               className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
             >
@@ -243,22 +228,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               >
                 <CheckSquare className="h-4 w-4" />
                 <span>Tasks</span>
-              </Link>
-              <Link
-                to="/calendar"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Calendar</span>
-              </Link>
-              <Link
-                to="/inbox"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Inbox className="h-4 w-4" />
-                <span>Inbox</span>
               </Link>
               <Link
                 to="/reminders"
