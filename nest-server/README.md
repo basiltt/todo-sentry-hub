@@ -48,7 +48,7 @@ npm run start:prod
 - Regular users can only see and manage their own todos
 
 ## TypeScript Configuration
-The project is configured to work properly with NestJS decorators. Make sure the following settings are present in your tsconfig.json:
+The project is configured to work properly with NestJS decorators. The following settings in tsconfig.json are critical for NestJS to function correctly:
 
 ```json
 {
@@ -60,7 +60,9 @@ The project is configured to work properly with NestJS decorators. Make sure the
 }
 ```
 
-The `useDefineForClassFields` setting is particularly important as it affects how TypeScript handles decorators in class fields, which is critical for NestJS's validation decorators.
+The `emitDecoratorMetadata` and `experimentalDecorators` settings enable TypeScript to process decorator syntax correctly.
+
+The `useDefineForClassFields` setting is particularly important as it affects how TypeScript handles decorators in class fields, which is critical for NestJS's validation decorators. Setting this to false ensures proper decorator behavior with class properties.
 
 ## Development Notes
 - The backend uses JWT for authentication
