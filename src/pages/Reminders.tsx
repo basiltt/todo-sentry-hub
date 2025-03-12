@@ -9,7 +9,7 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { Input } from "@/components/ui/input";
 import { Clock, Calendar, Bell, Plus, ChevronDown, CheckCircle2, Circle, Tag, Trash2, Edit, X } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/lib/auth";
 import { Reminder, getReminders, addReminder, toggleReminderComplete, editReminder, deleteReminder, groupRemindersByDate } from "@/lib/reminder";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
