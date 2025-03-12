@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Types
 export type UserRole = "user" | "admin";
@@ -11,52 +12,67 @@ export interface User {
   role: UserRole;
 }
 
-// API base URL - Using a mock implementation since the NestJS server is not available
-const API_BASE_URL = '/api'; // Changed from 'http://localhost:3001' to use a relative path
-
 // Local storage keys
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
 
-// Mock data for testing without a backend
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'admin@example.com',
-    name: 'Admin User',
-    role: 'admin' as UserRole,
-    password: 'password',
-  },
-  {
-    id: '2',
-    email: 'user@example.com',
-    name: 'Regular User',
-    role: 'user' as UserRole,
-    password: 'password',
-  }
-];
-
 // Login function
 export const login = async (email: string, password: string): Promise<User> => {
   try {
-    // Since the backend is unavailable, let's use mock implementation
-    const user = MOCK_USERS.find(user => user.email === email && user.password === password);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
     
-    if (!user) {
-      throw new Error('Invalid email or password');
+    if (error) throw error;
+    
+    if (!data.user) {
+      throw new Error('No user data returned');
     }
-
-    // Create a mock token (this would normally come from the backend)
-    const token = `mock-token-${user.id}-${Date.now()}`;
     
-    // Exclude password from the stored user object
-    const { password: _, ...userWithoutPassword } = user;
+    // Get user profile
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+      
+    if (profileError) {
+      console.error('Error fetching profile:', profileError);
+      // If no profile, create one with basic info
+      if (profileError.code === 'PGRST116') {
+        const newProfile = {
+          id: data.user.id,
+          name: email.split('@')[0], // Basic name from email
+          role: 'user' as UserRole,
+        };
+        
+        const { data: newProfileData, error: newProfileError } = await supabase
+          .from('profiles')
+          .insert([newProfile])
+          .select()
+          .single();
+          
+        if (newProfileError) throw newProfileError;
+        profileData = newProfileData;
+      } else {
+        throw profileError;
+      }
+    }
     
-    // Store in localStorage
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userWithoutPassword));
+    // Create user object
+    const user: User = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name: profileData?.name || email.split('@')[0],
+      role: profileData?.role || 'user',
+    };
     
-    return userWithoutPassword;
+    // Store session in local storage for compatibility with current app
+    localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    
+    return user;
   } catch (error) {
     console.error('Login error:', error);
     if (error instanceof Error) {
@@ -73,29 +89,51 @@ export const register = async (
   name: string
 ): Promise<User> => {
   try {
-    console.log('Registering user:', { email, name });
-    
-    // Check if user already exists in mock data
-    if (MOCK_USERS.some(user => user.email === email)) {
-      throw new Error('User already exists with this email');
-    }
-
-    // Create a new mock user
-    const newUser = {
-      id: `${MOCK_USERS.length + 1}`,
+    // Register user
+    const { data, error } = await supabase.auth.signUp({
       email,
+      password,
+      options: {
+        data: {
+          name,
+        }
+      }
+    });
+    
+    if (error) throw error;
+    
+    if (!data.user) {
+      throw new Error('No user data returned');
+    }
+    
+    // Create profile
+    const profile = {
+      id: data.user.id,
       name,
       role: 'user' as UserRole,
     };
-
-    // Create a mock token (this would normally come from the backend)
-    const token = `mock-token-${newUser.id}-${Date.now()}`;
     
-    // Store in localStorage
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert([profile]);
+      
+    if (profileError) throw profileError;
     
-    return newUser;
+    // Create user object
+    const user: User = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name,
+      role: 'user',
+    };
+    
+    // Store session in local storage
+    if (data.session) {
+      localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    }
+    
+    return user;
   } catch (error) {
     console.error('Registration error:', error);
     if (error instanceof Error) {
@@ -106,7 +144,10 @@ export const register = async (
 };
 
 // Logout function
-export const logout = (): void => {
+export const logout = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut();
+  if (error) console.error('Error signing out:', error);
+  
   localStorage.removeItem(AUTH_TOKEN_KEY);
   localStorage.removeItem(AUTH_USER_KEY);
 };
@@ -136,28 +177,82 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Listen for storage events (for multi-tab support)
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === AUTH_USER_KEY) {
-        if (event.newValue) {
+    // Check current session
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        // If we have a session but no user in localStorage, fetch user info
+        if (!getCurrentUser()) {
           try {
-            const updatedUser = JSON.parse(event.newValue) as User;
-            setUser(updatedUser);
-          } catch (e) {
-            console.error("Error parsing user from storage event", e);
+            // Get user profile
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', data.session.user.id)
+              .single();
+              
+            if (profileData) {
+              const user: User = {
+                id: data.session.user.id,
+                email: data.session.user.email || '',
+                name: profileData.name,
+                role: profileData.role,
+              };
+              
+              localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
+              localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+              setUser(user);
+            }
+          } catch (error) {
+            console.error("Error fetching user profile:", error);
           }
-        } else {
-          setUser(null);
         }
-      } else if (event.key === AUTH_TOKEN_KEY && !event.newValue) {
+      } else {
+        // No session, clear any stored user
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
         setUser(null);
       }
     };
-
-    window.addEventListener("storage", handleStorageChange);
     
+    checkSession();
+
+    // Subscribe to auth changes
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        try {
+          // Get user profile
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (profileData) {
+            const user: User = {
+              id: session.user.id,
+              email: session.user.email || '',
+              name: profileData.name,
+              role: profileData.role,
+            };
+            
+            localStorage.setItem(AUTH_TOKEN_KEY, session.access_token);
+            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+            setUser(user);
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
+        setUser(null);
+      }
+    });
+
+    // Cleanup
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      data.subscription.unsubscribe();
     };
   }, []);
 
@@ -189,9 +284,17 @@ export const useAuth = () => {
     }
   };
 
-  const logoutFn = () => {
-    logout();
-    setUser(null);
+  const logoutFn = async () => {
+    setLoading(true);
+    try {
+      await logout();
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error in hook:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
