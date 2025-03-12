@@ -13,7 +13,6 @@ import {
   Moon, 
   Sun, 
   CheckSquare,
-  Clock,
   Search
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -145,13 +144,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <CheckSquare className="h-4 w-4" />
               <span>Tasks</span>
             </Link>
-            <Link
-              to="/reminders"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-secondary/80 text-muted-foreground"
-            >
-              <Clock className="h-4 w-4" />
-              <span>Reminders</span>
-            </Link>
           </nav>
           
           <div className="mt-auto pt-4 border-t border-border">
@@ -228,14 +220,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               >
                 <CheckSquare className="h-4 w-4" />
                 <span>Tasks</span>
-              </Link>
-              <Link
-                to="/reminders"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/80 text-muted-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Clock className="h-4 w-4" />
-                <span>Reminders</span>
               </Link>
             </nav>
 

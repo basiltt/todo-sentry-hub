@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
@@ -7,7 +6,7 @@ import TodoForm from "@/components/todos/TodoForm";
 import { useAuth } from "@/lib/auth";
 import { getTodos, addTodo, toggleTodoComplete, editTodo, deleteTodo, Todo } from "@/lib/todo";
 import { useToast } from "@/components/ui/use-toast";
-import { Calendar, Clock, CheckSquare, Plus } from "lucide-react";
+import { Calendar, CheckSquare, Plus } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated, isAdmin } = useAuth();
@@ -137,7 +136,6 @@ const Dashboard: React.FC = () => {
   const quickActions = [
     { icon: <Plus className="h-4 w-4" />, label: "Add task", color: "bg-task-blue text-white" },
     { icon: <Calendar className="h-4 w-4" />, label: "Schedule", color: "bg-task-purple text-white" },
-    { icon: <Clock className="h-4 w-4" />, label: "Reminders", color: "bg-task-orange text-white" },
   ];
 
   return (
