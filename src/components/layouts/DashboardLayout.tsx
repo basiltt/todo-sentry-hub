@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
@@ -33,12 +32,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   
-  // Check system preference for dark mode
   useEffect(() => {
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add("dark");
+    if (document.documentElement.classList.contains("dark")) {
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
@@ -58,7 +54,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-dots-pattern bg-background/90 dark:bg-background/90">
-      {/* Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md dark:bg-background/80 border-b border-border">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
@@ -151,9 +146,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </div>
       </header>
 
-      {/* Main content with sidebar */}
       <div className="flex flex-1 min-h-[calc(100vh-4rem)]">
-        {/* Sidebar (hidden on mobile) */}
         <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border">
           <nav className="space-y-1 mt-6">
             <Link
@@ -206,7 +199,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </aside>
 
-        {/* Mobile Sidebar */}
         <div
           className={`fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden ${
             mobileMenuOpen ? "block" : "hidden"
@@ -307,7 +299,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </div>
 
-        {/* Main Content */}
         <main className="flex-1 p-6 md:p-8 animate-fade-in">
           {children}
         </main>
