@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -28,15 +29,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
-  
-  useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -47,14 +42,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark");
-  };
-
   return (
-    <div className="min-h-screen bg-dots-pattern bg-background/90 dark:bg-background/90">
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md dark:bg-background/80 border-b border-border">
+    <div className="min-h-screen bg-dots-pattern bg-background/90 dark:bg-background/95">
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-sidebar-background/90 backdrop-blur-md border-b border-border">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <button
@@ -114,11 +104,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={toggleDarkMode}
+              onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-secondary/80 transition-colors"
               aria-label="Toggle theme"
             >
-              {isDarkMode ? (
+              {theme === 'dark' ? (
                 <Sun className="h-[18px] w-[18px]" />
               ) : (
                 <Moon className="h-[18px] w-[18px]" />
@@ -137,7 +127,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </ButtonCustom>
               
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center border border-primary/30">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
               </div>
@@ -147,11 +137,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </header>
 
       <div className="flex flex-1 min-h-[calc(100vh-4rem)]">
-        <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border">
+        <aside className="hidden md:flex flex-col w-56 p-4 border-r border-border bg-sidebar-background/50 dark:bg-sidebar-background">
           <nav className="space-y-1 mt-6">
             <Link
               to="/dashboard"
-              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-primary bg-primary/5 font-medium"
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-primary bg-primary/10 font-medium"
             >
               <CheckSquare className="h-4 w-4" />
               <span>Tasks</span>

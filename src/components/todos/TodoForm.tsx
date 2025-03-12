@@ -21,13 +21,13 @@ const TodoForm: React.FC<TodoFormProps> = ({ onAdd, isLoading = false }) => {
   };
 
   return (
-    <div className="glass-card mb-8">
+    <div className="glass-card mb-8 dark:bg-card/50 dark:backdrop-blur-md">
       <form
         onSubmit={handleSubmit}
         className="p-4"
       >
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
             <Plus className="h-4 w-4 text-primary" />
           </div>
           <h3 className="text-sm font-medium">Add new task</h3>
@@ -39,7 +39,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ onAdd, isLoading = false }) => {
           onChange={(e) => setText(e.target.value)}
           placeholder="What needs to be done?"
           disabled={isLoading}
-          className="h-11 mb-3 bg-secondary/50 border-0 focus-visible:ring-1"
+          className="h-11 mb-3 bg-secondary/50 border-0 focus-visible:ring-1 dark:bg-secondary"
         />
         
         <div className="flex items-center justify-between">

@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Today's date */}
-          <div className="glass-card p-5 col-span-2">
+          <div className="glass-card p-5 col-span-2 dark:bg-card/50 dark:backdrop-blur-md">
             <h1 className="text-2xl font-bold mb-2">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h1>
             <p className="text-muted-foreground">
               {isAdmin 
@@ -155,18 +155,18 @@ const Dashboard: React.FC = () => {
           </div>
           
           {/* Quick stats */}
-          <div className="glass-card p-5 flex flex-col justify-between">
+          <div className="glass-card p-5 flex flex-col justify-between dark:bg-card/50 dark:backdrop-blur-md">
             <div className="text-sm text-muted-foreground mb-2">Task completion</div>
             <div className="flex justify-between mb-2">
               <div>
                 <div className="text-3xl font-semibold">{completionRate}%</div>
                 <div className="text-xs text-muted-foreground">{completedTodos} of {todos.length} tasks</div>
               </div>
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                 <CheckSquare className="h-5 w-5 text-primary" />
               </div>
             </div>
-            <div className="progress-bar">
+            <div className="progress-bar dark:bg-background">
               <div 
                 className="progress-value bg-primary" 
                 style={{ width: `${completionRate}%` }}
