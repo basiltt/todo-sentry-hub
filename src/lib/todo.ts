@@ -11,11 +11,6 @@ export interface Todo {
   createdAt: Date;
 }
 
-// Get auth token from local storage
-const getAuthToken = (): string | null => {
-  return localStorage.getItem("auth_token");
-};
-
 // Get todos for a user
 export const getTodos = async (currentUser: User): Promise<Todo[]> => {
   try {
@@ -44,9 +39,6 @@ export const getTodos = async (currentUser: User): Promise<Todo[]> => {
 
 // Add a new todo
 export const addTodo = async (text: string, currentUser: User): Promise<Todo> => {
-  const token = getAuthToken();
-  if (!token) throw new Error('Not authenticated');
-
   try {
     const newTodo = {
       text,
@@ -77,9 +69,6 @@ export const addTodo = async (text: string, currentUser: User): Promise<Todo> =>
 
 // Toggle todo completion status
 export const toggleTodoComplete = async (id: string, currentUser: User): Promise<Todo> => {
-  const token = getAuthToken();
-  if (!token) throw new Error('Not authenticated');
-
   try {
     // First, get the current todo to check its completed status
     const { data: todo, error: fetchError } = await supabase
@@ -89,11 +78,6 @@ export const toggleTodoComplete = async (id: string, currentUser: User): Promise
       .single();
       
     if (fetchError) throw fetchError;
-    
-    // Check if user is authorized to modify this todo
-    if (currentUser.role !== 'admin' && todo.userId !== currentUser.id) {
-      throw new Error('Unauthorized to modify this todo');
-    }
     
     // Toggle the completion status
     const { data, error } = await supabase
@@ -118,24 +102,7 @@ export const toggleTodoComplete = async (id: string, currentUser: User): Promise
 
 // Edit a todo
 export const editTodo = async (id: string, text: string, currentUser: User): Promise<Todo> => {
-  const token = getAuthToken();
-  if (!token) throw new Error('Not authenticated');
-
   try {
-    // First, get the current todo to check ownership
-    const { data: todo, error: fetchError } = await supabase
-      .from('todos')
-      .select('*')
-      .eq('id', id)
-      .single();
-      
-    if (fetchError) throw fetchError;
-    
-    // Check if user is authorized to modify this todo
-    if (currentUser.role !== 'admin' && todo.userId !== currentUser.id) {
-      throw new Error('Unauthorized to modify this todo');
-    }
-    
     // Update the todo text
     const { data, error } = await supabase
       .from('todos')
@@ -159,24 +126,7 @@ export const editTodo = async (id: string, text: string, currentUser: User): Pro
 
 // Delete a todo
 export const deleteTodo = async (id: string, currentUser: User): Promise<void> => {
-  const token = getAuthToken();
-  if (!token) throw new Error('Not authenticated');
-
   try {
-    // First, get the current todo to check ownership
-    const { data: todo, error: fetchError } = await supabase
-      .from('todos')
-      .select('*')
-      .eq('id', id)
-      .single();
-      
-    if (fetchError) throw fetchError;
-    
-    // Check if user is authorized to delete this todo
-    if (currentUser.role !== 'admin' && todo.userId !== currentUser.id) {
-      throw new Error('Unauthorized to delete this todo');
-    }
-    
     // Delete the todo
     const { error } = await supabase
       .from('todos')

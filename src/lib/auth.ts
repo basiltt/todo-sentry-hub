@@ -31,6 +31,8 @@ export const login = async (email: string, password: string): Promise<User> => {
     }
     
     // Get user profile
+    let userProfile;
+    
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('*')
@@ -54,18 +56,20 @@ export const login = async (email: string, password: string): Promise<User> => {
           .single();
           
         if (newProfileError) throw newProfileError;
-        profileData = newProfileData;
+        userProfile = newProfileData;
       } else {
         throw profileError;
       }
+    } else {
+      userProfile = profileData;
     }
     
     // Create user object
     const user: User = {
       id: data.user.id,
       email: data.user.email || '',
-      name: profileData?.name || email.split('@')[0],
-      role: profileData?.role || 'user',
+      name: userProfile?.name || email.split('@')[0],
+      role: (userProfile?.role as UserRole) || 'user',
     };
     
     // Store session in local storage for compatibility with current app
@@ -185,18 +189,23 @@ export const useAuth = () => {
         if (!getCurrentUser()) {
           try {
             // Get user profile
-            const { data: profileData } = await supabase
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', data.session.user.id)
               .single();
+              
+            if (profileError) {
+              console.error("Error fetching user profile:", profileError);
+              return;
+            }
               
             if (profileData) {
               const user: User = {
                 id: data.session.user.id,
                 email: data.session.user.email || '',
                 name: profileData.name,
-                role: profileData.role,
+                role: profileData.role as UserRole,
               };
               
               localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
@@ -222,18 +231,23 @@ export const useAuth = () => {
       if (event === 'SIGNED_IN' && session) {
         try {
           // Get user profile
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
+           
+          if (profileError) {
+            console.error("Error fetching user profile:", profileError);
+            return;
+          }
             
           if (profileData) {
             const user: User = {
               id: session.user.id,
               email: session.user.email || '',
               name: profileData.name,
-              role: profileData.role,
+              role: profileData.role as UserRole,
             };
             
             localStorage.setItem(AUTH_TOKEN_KEY, session.access_token);
