@@ -6,8 +6,7 @@ This document outlines the steps for migrating the backend from SuperBase to a N
 
 ## 1. Project Setup and Initial Configuration (5–10 minutes)
 - **Task 1.1:** Install the NestJS CLI globally and create a new NestJS project.
-- **Task 1.2:** Initialize a Git repository (if not already set up) and create a basic project structure.
-- **Task 1.3:** Configure environment variables (using a `.env` file) for:
+- **Task 1.2:** Configure environment variables (using a `.env` file) for:
   - PostgreSQL connection details (host, port, username, password, database name).
   - JWT secret and expiration settings.
 
@@ -17,7 +16,6 @@ This document outlines the steps for migrating the backend from SuperBase to a N
 - **Task 2.1:** Install and configure the PostgreSQL integration using your preferred ORM (e.g., TypeORM or Prisma).
 - **Task 2.2:** Define the database entities:
   - Create a `User` entity.
-  - Create a `Task` entity.
 - **Task 2.3:** Configure and run migrations (or use entity synchronization) to set up the database schema.
 
 ---
@@ -33,15 +31,3 @@ This document outlines the steps for migrating the backend from SuperBase to a N
   - Generate and return a JWT token.
 - **Task 3.4:** Secure protected routes using JWT strategy and NestJS guards.
 
----
-
-## 4. Tasks Feature (Todo CRUD) Implementation (10–15 minutes)
-- **Task 4.1:** Create a `TaskModule` with its controller, service, and entity.
-- **Task 4.2:** Develop the following CRUD endpoints:
-  - **GET /tasks:** Retrieve all tasks for the authenticated user.
-  - **POST /tasks:** Create a new task.
-  - **PATCH /tasks/:id:** Update an existing task.
-  - **DELETE /tasks/:id:** Delete a task.
-- **Task 4.3:** Implement data validation using DTOs and NestJS Pipes.
-
----
